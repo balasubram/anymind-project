@@ -7,10 +7,7 @@ import com.bala.anymind.model.BitCoinWalletHistoryRestModel;
 import com.bala.anymind.service.BitCoinService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.util.List;
@@ -29,18 +26,19 @@ public class BitcoinController {
         return ResponseEntity.ok().build();
     }
 
-    @RequestMapping(value = "/getWalletHistory", method = RequestMethod.POST)
-    public ResponseEntity<List<BitCoinWalletHistoryResponse>> getWalletHistory(@RequestBody BitCoinWalletHistoryRestModel bitCoinWalletHistoryRestModel) {
+    @RequestMapping(value = "/getWalletHistory", method = RequestMethod.GET)
+    public ResponseEntity<List<BitCoinWalletHistoryResponse>> getWalletHistory(@RequestParam("startDatetime") String startDateTime,
+                                                                               @RequestParam("endDatetime") String endDatetime) {
+        BitCoinWalletHistoryRestModel bitCoinWalletHistoryRestModel = new BitCoinWalletHistoryRestModel(startDateTime, endDatetime);
         List<BitCoinWalletHistoryResponse> bitCoinWalletHistoryResponses = bitCoinService.getWalletHistory(bitCoinWalletHistoryRestModel);
         return ResponseEntity.ok(bitCoinWalletHistoryResponses);
     }
 
 
-    @RequestMapping(value = "/getAllWalletHistories", method = RequestMethod.POST)
+    @RequestMapping(value = "/getAllWalletHistories", method = RequestMethod.GET)
     public ResponseEntity<List<BitCoinWalletHistoryResponse>> getWalletHistories() {
         List<BitCoinWalletHistoryResponse> bitCoinWalletHistoryResponses = bitCoinService.getWalletHistories();
         return ResponseEntity.ok(bitCoinWalletHistoryResponses);
     }
-
 
 }

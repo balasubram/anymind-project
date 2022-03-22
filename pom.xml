@@ -14,6 +14,7 @@
     <artifactId>anymind-project</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>anymind-project</name>
+    <packaging>jar</packaging>
 
     <properties>
         <java.version>1.8</java.version>
