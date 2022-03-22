@@ -3,10 +3,7 @@ package com.bala.anymind.model;
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicLong;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "BIT_COIN_REQUESTS", schema = "BIT_COIN")
@@ -16,6 +13,7 @@ public class BitCoinRequestDBModel {
 
 	@Id
 	@Column(name = "BIT_COIN_REQUESTS_ID", columnDefinition = "bigint", nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long bitCoinRequestsId;
 
 	@Column(name = "RECEIVED_TIMESTAMP", columnDefinition = "bigint", nullable = false)
@@ -28,11 +26,11 @@ public class BitCoinRequestDBModel {
 	private boolean processed;
 
 	public BitCoinRequestDBModel() {
-		this.bitCoinRequestsId = PRIMARY_KEY.addAndGet(1);
+//		this.bitCoinRequestsId = PRIMARY_KEY.addAndGet(1);
 	}
 
 	public BitCoinRequestDBModel(Long timestamp, BigDecimal amount) {
-		this.bitCoinRequestsId = PRIMARY_KEY.addAndGet(1);
+//		this.bitCoinRequestsId = PRIMARY_KEY.addAndGet(1);
 		this.timeStamp = timestamp;
 		this.amount = amount;
 		this.processed = false;
@@ -62,7 +60,7 @@ public class BitCoinRequestDBModel {
 		this.amount = amount;
 	}
 
-	public boolean isProcessed() {
+	public boolean getProcessed() {
 		return processed;
 	}
 

@@ -1,9 +1,6 @@
 package com.bala.anymind.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -15,6 +12,7 @@ public class BitCoinComputedResultsDBModel {
 
 	@Id
 	@Column(name = "BIT_COIN_COMPUTED_REQUESTS_ID", columnDefinition = "bigint", nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long bitCoinRequestsId;
 
 	@Column(name = "COMPUTED_TIMESTAMP", columnDefinition = "bigint", nullable = false, unique = true)
@@ -28,7 +26,7 @@ public class BitCoinComputedResultsDBModel {
 	}
 
 	public BitCoinComputedResultsDBModel(Long timestamp, BigDecimal amount) {
-		this.bitCoinRequestsId = PRIMARY_KEY.addAndGet(1);
+//		this.bitCoinRequestsId = PRIMARY_KEY.addAndGet(1);
 		this.computedTimeStamp = timestamp;
 		this.amount = amount;
 	}
@@ -62,7 +60,7 @@ public class BitCoinComputedResultsDBModel {
 	}
 
 	public void setBitCoinRequestsId() {
-		this.bitCoinRequestsId = PRIMARY_KEY.addAndGet(1);
+//		this.bitCoinRequestsId = PRIMARY_KEY.addAndGet(1);
 	}
 
 }

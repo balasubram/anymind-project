@@ -60,4 +60,8 @@ public class BitCoinComputedResultsRepository extends AbstractDAO<BitCoinCompute
         }
     }
 
+    public List<BitCoinComputedResultsDBModel> retrieveAllResults() {
+        return super.findAll();
+    }
+
 }

@@ -11,18 +11,18 @@ import java.util.concurrent.CountDownLatch;
 @ComponentScan(basePackages = "com.bala.anymind.config")
 public class AnymindProjectApplication {
 
-	public static void main(String[] args) {
-		ApplicationContext applicationContext = SpringApplication.run(AnymindProjectApplication.class, args);
-		AnymindProjectApplication anymindProjectApplication = applicationContext.getBean(AnymindProjectApplication.class);
-		final CountDownLatch shutdownLatch = new CountDownLatch(1);
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			shutdownLatch.countDown();
-			anymindProjectApplication.initiateShutdown(applicationContext, 0);
-		}));
-	}
+    public static void main(String[] args) {
+        ApplicationContext applicationContext = SpringApplication.run(AnymindProjectApplication.class, args);
+        AnymindProjectApplication anymindProjectApplication = applicationContext.getBean(AnymindProjectApplication.class);
+        final CountDownLatch shutdownLatch = new CountDownLatch(1);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            shutdownLatch.countDown();
+            anymindProjectApplication.initiateShutdown(applicationContext, 0);
+        }));
+    }
 
-	private void initiateShutdown(ApplicationContext applicationContext, int exitCode) {
-		SpringApplication.exit(applicationContext, () -> exitCode);
-	}
+    private void initiateShutdown(ApplicationContext applicationContext, int exitCode) {
+        SpringApplication.exit(applicationContext, () -> exitCode);
+    }
 
 }

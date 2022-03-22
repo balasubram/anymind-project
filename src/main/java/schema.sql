@@ -1,1 +1,0 @@
-create schema BIT_COIN

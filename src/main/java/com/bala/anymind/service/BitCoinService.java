@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 public class BitCoinService {
 
-	private static final DateTimeFormatter REQUEST_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
+	private static final DateTimeFormatter REQUEST_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
 	private static final Logger LOG = LoggerFactory.getLogger(BitCoinService.class);
 
@@ -42,7 +42,7 @@ public class BitCoinService {
 		Long timestamp = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 		try {
 			ZonedDateTime zonedDateTime =  ZonedDateTime.parse(bitCoinRequestRestModel.getDatetime(), REQUEST_TIME_FORMATTER);
-			timestamp = zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).toInstant().toEpochMilli();
+			timestamp =  zonedDateTime.toInstant().toEpochMilli();
 		} catch (DateTimeParseException dtpe) {
 			LOG.error("Invalid datetime format {}", bitCoinRequestRestModel.getDatetime());
 		}
@@ -53,22 +53,28 @@ public class BitCoinService {
 
 	public List<BitCoinWalletHistoryResponse> getWalletHistory(BitCoinWalletHistoryRestModel bitCoinWalletHistoryRestModel) {
 		try {
-			Long beginTimestamp = ZonedDateTime.parse(bitCoinWalletHistoryRestModel.getStartDatetime(), REQUEST_TIME_FORMATTER)
-					.withZoneSameInstant(ZoneId.of("UTC")).toInstant().toEpochMilli();
-			Long endTimestamp  = ZonedDateTime.parse(bitCoinWalletHistoryRestModel.getEndDatetime(), REQUEST_TIME_FORMATTER)
-					.withZoneSameInstant(ZoneId.of("UTC")).toInstant().toEpochMilli();
+			Long beginTimestamp = ZonedDateTime.parse(bitCoinWalletHistoryRestModel.getStartDatetime(), REQUEST_TIME_FORMATTER).toInstant().toEpochMilli();
+			Long endTimestamp  = ZonedDateTime.parse(bitCoinWalletHistoryRestModel.getEndDatetime(), REQUEST_TIME_FORMATTER).toInstant().toEpochMilli();
 
 			List<BitCoinComputedResultsDBModel> bitCoinComputedResultsDBModels = bitCoinComputedResultsRepository.retrieveResults(beginTimestamp, endTimestamp);
 			return bitCoinComputedResultsDBModels.stream().map( b -> {
-				ZonedDateTime zdt = Instant.ofEpochMilli(b.getComputedTimeStamp()).atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
+				ZonedDateTime zdt = Instant.ofEpochMilli(b.getComputedTimeStamp()).atZone(ZoneId.of("UTC"));
 				String datetime = zdt.format(REQUEST_TIME_FORMATTER);
 				return new BitCoinWalletHistoryResponse(datetime, b.getAmount());
 			}).collect(Collectors.toList());
-
 		} catch (DateTimeParseException dtpe) {
 			LOG.error("Invalid datetime format {}, {}", bitCoinWalletHistoryRestModel.getStartDatetime(), bitCoinWalletHistoryRestModel.getEndDatetime());
 			return new ArrayList<>();
 		}
+	}
+
+	public List<BitCoinWalletHistoryResponse> getWalletHistories() {
+		List<BitCoinComputedResultsDBModel> bitCoinComputedResultsDBModels = bitCoinComputedResultsRepository.retrieveAllResults();
+		return bitCoinComputedResultsDBModels.stream().map( b -> {
+			ZonedDateTime zdt = Instant.ofEpochMilli(b.getComputedTimeStamp()).atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
+			String datetime = zdt.format(REQUEST_TIME_FORMATTER);
+			return new BitCoinWalletHistoryResponse(datetime, b.getAmount());
+		}).collect(Collectors.toList());
 	}
 
 }

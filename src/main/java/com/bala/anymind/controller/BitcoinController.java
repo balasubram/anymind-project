@@ -32,7 +32,14 @@ public class BitcoinController {
     @RequestMapping(value = "/getWalletHistory", method = RequestMethod.POST)
     public ResponseEntity<List<BitCoinWalletHistoryResponse>> getWalletHistory(@RequestBody BitCoinWalletHistoryRestModel bitCoinWalletHistoryRestModel) {
         List<BitCoinWalletHistoryResponse> bitCoinWalletHistoryResponses = bitCoinService.getWalletHistory(bitCoinWalletHistoryRestModel);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(bitCoinWalletHistoryResponses);
+    }
+
+
+    @RequestMapping(value = "/getAllWalletHistories", method = RequestMethod.POST)
+    public ResponseEntity<List<BitCoinWalletHistoryResponse>> getWalletHistories() {
+        List<BitCoinWalletHistoryResponse> bitCoinWalletHistoryResponses = bitCoinService.getWalletHistories();
+        return ResponseEntity.ok(bitCoinWalletHistoryResponses);
     }
 
 

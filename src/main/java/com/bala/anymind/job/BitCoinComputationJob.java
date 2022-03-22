@@ -1,4 +1,4 @@
-package com.bala.anymind.jobs;
+package com.bala.anymind.job;
 
 import com.bala.anymind.dao.BitCoinComputedResultsRepository;
 import com.bala.anymind.dao.BitCoinRequestRepository;
@@ -12,13 +12,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,13 +26,14 @@ import java.util.stream.Collectors;
 @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 public class BitCoinComputationJob {
 
+
     @Autowired
     private BitCoinRequestRepository bitCoinRequestRepository;
 
     @Autowired
     private BitCoinComputedResultsRepository bitCoinComputedResultsRepository;
 
-    @Scheduled(cron = "0/10 * * * * MON-FRI")
+    @Scheduled(cron = "${spring.anymind.bit.coin.computation.frequency}")
     public void computeBitCoinSummary() {
         List<BitCoinRequestDBModel> bitCoinRequestDBModels = bitCoinRequestRepository.retrieveNonProcessedBitCoinRequests(
                 LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
@@ -52,12 +51,12 @@ public class BitCoinComputationJob {
             BitCoinComputedResultsDBModel bitCoinComputedResultsDBModel = bitCoinComputedResultMap.getOrDefault(
                     groupedBitCoinEntries.getKey(), new BitCoinComputedResultsDBModel());
             bitCoinComputedResultsDBModel.addAmount(computedResult);
+            bitCoinComputedResultsDBModel.setComputedTimeStamp(groupedBitCoinEntries.getKey());
             toBeSaved.add(bitCoinComputedResultsDBModel);
         }
         bitCoinComputedResultsRepository.createOrUpdateRecords(toBeSaved);
         bitCoinRequestDBModels.forEach(b -> b.setProcessed(true));
         bitCoinRequestRepository.updateRecords(bitCoinRequestDBModels);
-
     }
 
 }
