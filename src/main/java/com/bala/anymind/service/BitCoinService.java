@@ -29,6 +29,8 @@ public class BitCoinService {
 
 	private static final DateTimeFormatter REQUEST_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
+	private static final DateTimeFormatter RESPONSE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
+
 	private static final Logger LOG = LoggerFactory.getLogger(BitCoinService.class);
 
 	@Autowired
@@ -59,8 +61,8 @@ public class BitCoinService {
 			List<BitCoinComputedResultsDBModel> bitCoinComputedResultsDBModels = bitCoinComputedResultsRepository.retrieveResults(beginTimestamp, endTimestamp);
 			return bitCoinComputedResultsDBModels.stream().map( b -> {
 				ZonedDateTime zdt = Instant.ofEpochMilli(b.getComputedTimeStamp()).atZone(ZoneId.of("UTC"));
-				String datetime = zdt.format(REQUEST_TIME_FORMATTER);
-				return new BitCoinWalletHistoryResponse(datetime, b.getAmount());
+				String datetime = zdt.format(RESPONSE_TIME_FORMATTER);
+				return new BitCoinWalletHistoryResponse(datetime, b.getFinalAmount());
 			}).collect(Collectors.toList());
 		} catch (DateTimeParseException dtpe) {
 			LOG.error("Invalid datetime format {}, {}", bitCoinWalletHistoryRestModel.getStartDatetime(), bitCoinWalletHistoryRestModel.getEndDatetime());
@@ -71,9 +73,9 @@ public class BitCoinService {
 	public List<BitCoinWalletHistoryResponse> getWalletHistories() {
 		List<BitCoinComputedResultsDBModel> bitCoinComputedResultsDBModels = bitCoinComputedResultsRepository.retrieveAllResults();
 		return bitCoinComputedResultsDBModels.stream().map( b -> {
-			ZonedDateTime zdt = Instant.ofEpochMilli(b.getComputedTimeStamp()).atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
-			String datetime = zdt.format(REQUEST_TIME_FORMATTER);
-			return new BitCoinWalletHistoryResponse(datetime, b.getAmount());
+			ZonedDateTime zdt = Instant.ofEpochMilli(b.getComputedTimeStamp()).atZone(ZoneId.of("UTC"));
+			String datetime = zdt.format(RESPONSE_TIME_FORMATTER);
+			return new BitCoinWalletHistoryResponse(datetime, b.getFinalAmount());
 		}).collect(Collectors.toList());
 	}
 

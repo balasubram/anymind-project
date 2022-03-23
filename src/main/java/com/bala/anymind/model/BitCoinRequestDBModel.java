@@ -9,6 +9,8 @@ import javax.persistence.*;
 @Table(name = "BIT_COIN_REQUESTS", schema = "BIT_COIN")
 public class BitCoinRequestDBModel {
 
+	// For Primary Key
+	// Instead Used Hibernate Identity
 	private static final AtomicLong PRIMARY_KEY = new AtomicLong(0);
 
 	@Id

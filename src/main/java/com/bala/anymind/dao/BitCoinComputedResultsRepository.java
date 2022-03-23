@@ -52,12 +52,22 @@ public class BitCoinComputedResultsRepository extends AbstractDAO<BitCoinCompute
     public void createOrUpdateRecords(List<BitCoinComputedResultsDBModel> bitCoinComputedResultsDBModels) {
         for (BitCoinComputedResultsDBModel bitCoinComputedResultsDBModel : bitCoinComputedResultsDBModels) {
             if(Objects.isNull(bitCoinComputedResultsDBModel.getBitCoinRequestsId())) {
-                bitCoinComputedResultsDBModel.setBitCoinRequestsId();
                 super.create(bitCoinComputedResultsDBModel);
             }  else {
                 super.update(bitCoinComputedResultsDBModel);
             }
         }
+    }
+
+    public List<BitCoinComputedResultsDBModel> retrieveComputedResultsGreaterThan(Long timestamp) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<BitCoinComputedResultsDBModel> criteriaQuery = criteriaBuilder.createQuery(BitCoinComputedResultsDBModel.class);
+        Root<BitCoinComputedResultsDBModel> bitCoinComputedResultsDBModelRoot = criteriaQuery.from(BitCoinComputedResultsDBModel.class);
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(criteriaBuilder.greaterThanOrEqualTo(bitCoinComputedResultsDBModelRoot.get("computedTimeStamp"), timestamp));
+        criteriaQuery.where(predicates.toArray(new Predicate[0]));
+        criteriaQuery.orderBy(criteriaBuilder.asc(bitCoinComputedResultsDBModelRoot.get("computedTimeStamp")));
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     public List<BitCoinComputedResultsDBModel> retrieveAllResults() {
